@@ -1,0 +1,184 @@
+#!/usr/bin/env node
+
+/**
+ * Hyperloop
+ * Copyright (c) 2014 by Appcelerator, Inc. All Rights Reserved.
+ * See LICENSE for more information on licensing.
+ */
+var os = require('os'),
+	_ = require('underscore'),
+	path = require('path'),
+	fs = require('fs'),
+	colors = require('colors'),
+	async = require('async'),
+	local_hl = path.join(__dirname,'..','..','hyperloop-common'),
+	hyperloop = fs.existsSync(local_hl) ? require(local_hl) : require('hyperloop-common'), // special to allow dev easier
+	pkg = JSON.parse(fs.readFileSync(path.join(__dirname,'../package.json'), 'utf8')),
+	Processor = require('../lib/processor'),
+	log = hyperloop.log;
+
+// for older node modules
+path.existsSync = fs.existsSync;
+
+////////////////////////////////////
+////////// MAIN EXECUTION //////////
+////////////////////////////////////
+
+var processor = new Processor();
+
+processor.on('help',function(platform){
+	var args = this.args.slice(1);
+	banner();
+	log.log('');
+		
+	var commands = platform && hyperloop.getCommands(platform);
+
+	if (platform && args.length) {
+		// command specific help
+		var cmd = args[0];
+		if (cmd in commands) {
+			var command = hyperloop.getCommand(cmd),
+				s = (pkg.name+" "+cmd),
+				options = command.getOptions();
+			log.log("Usage: "+(s.magenta)+" "+" <options>");
+			log.log("");
+			log.log("Using platform driver: "+platform.name.yellow.bold);
+			log.log("");
+			log.log(command.getHelp().yellow.bold);
+			log.log("");
+			if (options.length) {
+				log.log("Options:");
+				log.log("");
+				options.forEach(function(option){
+					if (!option.platform || option.platform.test(process.platform)) {
+						log.log(("  --"+processor.rpad(option.name,20)).cyan+" "+(option.description).grey);
+					}
+				});
+			}
+		}
+		else {
+			log.fatal("unknown command: "+cmd);
+		}
+	}
+	else {
+		// generic help
+		log.log("Usage: "+(pkg.name.magenta)+" [command] <options>");
+		log.log("");
+		log.log("Using platform driver: "+platform.name.yellow.bold);
+		log.log("");
+
+		if (platform) {
+			log.log("Commands:");
+			log.log("");
+
+
+			platform && Object.keys(commands).forEach(function(cmd){
+				var command = hyperloop.getCommand(cmd),
+					help = command.getHelp(),
+					name = processor.padRight(command.getName(),22);
+				log.log("  "+(name.magenta)+" "+help.grey);
+			});
+
+		}
+		else {
+			log.log("No platform specified or determined based on project/working directory".red);
+		}
+		log.log("");
+		log.log("Global Options:");
+		log.log("");
+		log.log(processor.rpad("  --version",22).cyan+" output version of this program".grey);
+		log.log(processor.rpad("  --debug",22).cyan+" print debugging information".grey);
+		log.log(processor.rpad("  --[no-]colors",22).cyan+" turn on/off color output".grey);
+		log.log(processor.rpad("  --log-level",22).cyan+" set the logging level (default 'info')".grey);
+		log.log(processor.rpad("  --report",22).cyan+" report errors found during execution to github issues".grey);
+		log.log("");
+		log.log("Run "+("hyperloop help <command>").yellow+" to get specific command help");
+	}
+
+	log.log("");
+	process.exit(0);
+});
+
+processor.on('version',function(){
+	log.log(pkg.version);
+	process.exit(0);
+});
+
+processor.on('colors',function(v){
+	log.useColor = v;
+});
+
+processor.on('debug',function(){
+	log.level = 'debug';
+});
+
+processor.on('log-level', function(v) {
+	log.level = v;
+});
+
+processor.on('report', function() {
+	log.report = true;
+});
+
+processor.parse(function(err,options,args){
+	var workDir = options.srcdir || process.cwd(),
+		platform = options.platform,
+		help = args.length < 1 || args[0] === 'help';
+
+
+	if (!platform && !help) {
+		log.fatal("Cannot determine the platform.  Please specify with --platform");
+	}
+
+	var platformDir = path.join(workDir,'node_modules','hyperloop-'+platform);
+	if (!fs.existsSync(platformDir)) {
+
+		// most normal case, inside an npm install
+		platformDir = path.join(process.cwd(),'node_modules','hyperloop-'+platform);
+
+		if (!fs.existsSync(platformDir)) {
+
+			// special case for development where you have all the modules checked out together
+			platformDir = path.join(process.cwd(), '..', 'hyperloop-'+platform);
+
+			if (!fs.existsSync(platformDir)) {
+				if (!help) {
+					log.fatal("Can't find platform libraries for "+("hyperloop-"+platform).blue+". You should `npm install` into your project directory");
+				}
+				else {
+					return processor.emit('help');
+				}
+			}
+		}
+	}
+
+	var platformLibrary = require(platformDir);
+
+	// add the directory
+	platformLibrary.directory = platformDir;
+
+	if (help) {
+		return processor.emit('help',platformLibrary);
+	}
+
+	function done (err) {
+		err && log.fatal(err);
+		process.exit(0);
+	}
+
+	var tasks = [];
+
+	args.forEach(function(arg){
+		tasks.push(function(next){
+			hyperloop.run(arg, options, platformLibrary, [], next);
+		});
+	});
+
+	async.series(tasks,done);
+});
+
+
+function banner() {
+	log.log('∞ '.yellow+('Hyperloop').red.bold.underline+' ∞ '.yellow+pkg.version+' by Appcelerator, Inc.'.grey);
+	log.log(('For more information, visit '+pkg.repository.url.replace('.git','')).grey);
+}
