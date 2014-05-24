@@ -64,10 +64,10 @@ processor.on('help',function(platform){
 		// generic help
 		log.log("Usage: "+(pkg.name.magenta)+" [command] <options>");
 		log.log("");
-		log.log("Using platform driver: "+platform.name.yellow.bold);
-		log.log("");
 
 		if (platform) {
+			log.log("Using platform driver: "+platform.name.yellow.bold);
+			log.log("");
 			log.log("Commands:");
 			log.log("");
 
