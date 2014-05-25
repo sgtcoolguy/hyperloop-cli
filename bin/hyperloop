@@ -162,7 +162,7 @@ processor.parse(function(err,options,args){
 	}
 
 	function done (err) {
-		err && log.fatal(err);
+		err && log.fatal(String(err));
 		process.exit(0);
 	}
 
