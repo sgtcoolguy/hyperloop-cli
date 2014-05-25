@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+- '0.10'
+- '0.11'
+before_script:
+- npm install -g grunt-cli
+notifications:
+  flowdock:
+    secure: G6DjEB1uZQdjuKnA+wTls+hMi4nQC11xNO1Rb0S94IjMlrE7Br0Z/75YwPmzjXL/GFeil8Cj/aOUxm7fi1jwotK9NpXFE12C5lwE8TWfJ9nm0mh+2Du08V+khrKzUfCoNnKj4hVp9HgsXrERXq/eICO4f4slrDbiM+aNPvUoVkg=
