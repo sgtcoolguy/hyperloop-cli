@@ -183,14 +183,15 @@ processor.parse(function(err,options,args){
 		process.exit(0);
 	}
 
-	var tasks = [];
+	var tasks = [],
+		state = {};
 
 	args.forEach(function(arg){
 		tasks.push(function(next){
 			// make a copy in case the options are changed, we want to reset between
 			// each argument
 			var opts = _.clone(cfg);
-			hyperloop.run(arg, opts, platformLibrary, [], next);
+			hyperloop.run(state, arg, opts, platformLibrary, [], next);
 		});
 	});
 
