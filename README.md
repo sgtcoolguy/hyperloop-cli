@@ -2,9 +2,25 @@
 
 Hyperloop is a next-generation compiler that converts JavaScript source code into native code for targeting different native OS platforms. 
 
+> **EXPERIMENTAL: DO NOT USE IN PRODUCTION YET.**
+
 This is the command line front-end tool for running Hyperloop.
 
-> **EXPERIMENTAL: DO NOT USE IN PRODUCTION YET.**
+Check out the other Hyperloop sub-projects:
+
+- [Hyperloop Common](https://github.com/appcelerator/hyperloop-common) - Common library
+- [Hyperloop iOS](https://github.com/appcelerator/hyperloop-ios) - iOS backend
+- [Hyperloop Android](https://github.com/appcelerator/hyperloop-android) - Android backend
+- [Hyperloop Windows](https://github.com/appcelerator/hyperloop-windows) - Windows backend
+
+To run from this directory, you could use something like to run an iOS app:
+
+```bash
+./bin/hyperloop --platform=ios --debug --src=../hyperloop-ios/tests/a library compile package launch --log-level="trace" --arch=i386
+```
+
+The above command assumes all 3 projects (hyperloop-cli, hyperloop-common and hyperloop-ios) are at the same directory level.
+
 
 ## Requirements
 
