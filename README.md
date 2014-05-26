@@ -1,4 +1,4 @@
-# Hyperloop ∞ [![Build Status](https://magnum.travis-ci.com/appcelerator/hyperloop-cli.svg?token=xjwxUDk3aUJaLhguTqyB&branch=master)](https://magnum.travis-ci.com/appcelerator/hyperloop-cli)
+# Hyperloop CLI ∞ [![Build Status](https://travis-ci.org/appcelerator/hyperloop-cli.svg)](https://travis-ci.org/appcelerator/hyperloop-cli)
 
 Hyperloop is a next-generation compiler that converts JavaScript source code into native code for targeting different native OS platforms. 
 
@@ -10,6 +10,7 @@ Check out the other Hyperloop sub-projects:
 
 - [Hyperloop Common](https://github.com/appcelerator/hyperloop-common) - Common library
 - [Hyperloop iOS](https://github.com/appcelerator/hyperloop-ios) - iOS backend
+- [Hyperloop Java](https://github.com/appcelerator/hyperloop-java) - Java backend
 - [Hyperloop Android](https://github.com/appcelerator/hyperloop-android) - Android backend
 - [Hyperloop Windows](https://github.com/appcelerator/hyperloop-windows) - Windows backend
 
