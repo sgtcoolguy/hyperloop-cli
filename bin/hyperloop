@@ -92,6 +92,7 @@ processor.on('help',function(platform){
 		log.log(processor.rpad("  --[no-]colors",22).cyan+" turn on/off color output".grey);
 		log.log(processor.rpad("  --log-level",22).cyan+" set the logging level (default 'info')".grey);
 		log.log(processor.rpad("  --report",22).cyan+" report errors found during execution to github issues".grey);
+		log.log(processor.rpad("  --platform",22).cyan+" specify the platform to target such as ios".grey);
 		log.log("");
 		log.log("Run "+("hyperloop help <command>").yellow+" to get specific command help");
 	}
