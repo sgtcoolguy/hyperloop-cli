@@ -42,7 +42,8 @@
     "hyperloop": "./bin/hyperloop"
   },
   "scripts": {
-    "test": "grunt test"
+    "test": "grunt test",
+    "preinstall": "npm ln hyperloop-common ../hyperloop-common"
   },
   "repository": {
     "type": "git",
