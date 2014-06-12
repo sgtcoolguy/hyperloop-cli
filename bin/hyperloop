@@ -192,7 +192,12 @@ processor.parse(function(err,options,args){
 			// make a copy in case the options are changed, we want to reset between
 			// each argument
 			var opts = _.clone(cfg);
-			hyperloop.run(state, arg, opts, platformLibrary, [], next);
+			try {
+				hyperloop.run(state, arg, opts, platformLibrary, [], next);
+			}
+			catch (E) {
+				log.fatal(String(E));
+			}
 		});
 	});
 
