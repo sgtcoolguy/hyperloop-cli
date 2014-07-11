@@ -123,28 +123,24 @@ processor.on('report', function() {
 });
 
 processor.parse(function(err,options,args){
-	var workDir = options.src || process.cwd(),
+	var workDir = options.src || path.join(__dirname,'..','..'),
 		help = args.length < 1 || args[0] === 'help',
 		cfg = config.load(workDir, options),
 		platform = options.platform || cfg.platform;
-
 	var platformDir = path.join(workDir,'node_modules','hyperloop-'+platform);
+	
 	if (!fs.existsSync(platformDir)) {
-
 		// most normal case, inside an npm install
-		platformDir = path.join(process.cwd(),'node_modules','hyperloop-'+platform);
+		platformDir = path.join(__dirname,'node_modules','hyperloop-'+platform);
 
 		if (!fs.existsSync(platformDir)) {
 
 			// special case for development where you have all the modules checked out together
-			platformDir = path.join(process.cwd(), '..', 'hyperloop-'+platform);
-
+			platformDir = path.join(__dirname, '..', '..', 'hyperloop-'+platform);
 			if (!fs.existsSync(platformDir)) {
-
 				// search backwards looking for the platform directory
 				var indexJS = [ path.join(workDir, 'index.js'), path.join(workDir, '..', 'index.js'), path.join(workDir, '../..', 'index.js') ],
 					found = false;
-
 				for (var c=0;c<indexJS.length;c++) {
 					var fn = path.resolve(indexJS[c]),
 						pkg = path.join(path.dirname(fn), 'package.json');
@@ -168,8 +164,7 @@ processor.parse(function(err,options,args){
 				}
 			}
 		}
-	}
-
+	}	
 	var platformLibrary = require(platformDir);
 
 	// add the directory
