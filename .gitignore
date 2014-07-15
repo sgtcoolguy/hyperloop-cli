@@ -2,3 +2,5 @@ node_modules
 out
 build
 _tmp
+.java-version
+.DS_Store
